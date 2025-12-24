@@ -27,22 +27,20 @@ class PolymarketBot {
     constructor() {
         console.log('🚀 Initializing Polymarket Trading Bot...\n');
 
-        this.hasPrivateKey = !!process.env.PRIVATE_KEY && process.env.PRIVATE_KEY !== 'your_private_key_here';
-
-        if (this.hasPrivateKey) {
-            console.log('✅ Private key detected - Full functionality enabled\n');
-            this.wallet = new Wallet(process.env.PRIVATE_KEY!);
-            this.credentials = new CredentialGenerator();
-            this.allowanceManager = new AllowanceManager();
-            this.bidAsker = new BidAsker();
-            this.orderExecutor = new MarketOrderExecutor();
-            this.balanceChecker = new BalanceChecker();
-        } else {
-            console.log('⚠️  No private key found - Running in READ-ONLY mode');
-            console.log('   To enable trading, add your PRIVATE_KEY to the .env file\n');
-            this.bidAsker = new BidAsker();
+        if (!process.env.PRIVATE_KEY || process.env.PRIVATE_KEY === 'your_private_key_here') {
+            console.error('❌ Error: PRIVATE_KEY is not set in environment variables');
+            console.error('   Please add your PRIVATE_KEY to the .env file');
+            process.exit(1);
         }
 
+        this.hasPrivateKey = true;
+        console.log('✅ Private key detected - Full functionality enabled\n');
+        this.wallet = new Wallet(process.env.PRIVATE_KEY!);
+        this.credentials = new CredentialGenerator();
+        this.allowanceManager = new AllowanceManager();
+        this.bidAsker = new BidAsker();
+        this.orderExecutor = new MarketOrderExecutor();
+        this.balanceChecker = new BalanceChecker();
         this.marketFinder = new MarketFinder();
     }
 
